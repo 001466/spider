@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages={"com.ec"})
 @EnableDiscoveryClient
-@EnableFeignClients
+@EnableFeignClients(basePackages={"com.ec"})
 public class SpiderApplication {
 
 	public static void main(String[] args) {
