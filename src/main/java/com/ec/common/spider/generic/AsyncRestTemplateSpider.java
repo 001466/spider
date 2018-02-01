@@ -41,6 +41,8 @@ import org.springframework.util.concurrent.SuccessCallback;
 import org.springframework.web.client.AsyncRestTemplate;
 
 import com.ec.common.spider.SpiderAbstract;
+import com.ec.common.spider.generic.AsyncRestTemplateSpider.FCallback;
+import com.ec.common.spider.generic.AsyncRestTemplateSpider.SCallback;
 import com.ec.common.spider.model.ProxyEntity;
 import com.ec.common.spider.model.ProxyType;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -67,6 +69,10 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 		mapper.setSerializationInclusion(Include.NON_NULL);
 	}
 	
+	public HttpHeaders genEmptHeader(){
+		HttpHeaders headers = new HttpHeaders();
+		return headers;
+	}
 	
 	public HttpHeaders genJsonHeader(){
 		HttpHeaders jsonHeaders = new HttpHeaders();
@@ -215,7 +221,10 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 	}
 	
 	
-
+	protected void get(String url,HttpHeaders headers) throws Exception {
+		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+		asyncRestTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class).addCallback(new SCallback(url,null,System.currentTimeMillis()),new FCallback(url,null,System.currentTimeMillis()));;
+	}
 
 	protected void postJson(Object params, String url,HttpHeaders headers) throws Exception {
 
