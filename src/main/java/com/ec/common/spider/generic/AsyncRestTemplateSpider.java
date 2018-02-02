@@ -221,9 +221,9 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 	}
 	
 	
-	protected void get(String url,HttpHeaders headers) throws Exception {
+	protected void get(String url,HttpHeaders headers,SuccessCallback<ResponseEntity<byte[]>> scallback) throws Exception {
 		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
-		asyncRestTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class).addCallback(new SCallback(url,null,System.currentTimeMillis()),new FCallback(url,null,System.currentTimeMillis()));;
+		asyncRestTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class).addCallback(scallback,new FCallback(url,null,System.currentTimeMillis()));;
 	}
 
 	protected void postJson(Object params, String url,HttpHeaders headers) throws Exception {
@@ -276,7 +276,6 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 		@Override
 		public void onSuccess(ResponseEntity<byte[]> result) {
 			
-			System.err.println(new String(result.getBody()));
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("\r\n");
@@ -293,10 +292,10 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 			LOGGER.warn(sb.toString());
 			LOGGER.warn("\r\n");
 			
-			try {
+			/*try {
 				LOGGER.info(new StringBuilder(sb.toString()).append("result:\r\n").append(decode(result)).append("\r\n").toString());
 			} catch (Exception e) {LOGGER.error(sb.toString());}
-			LOGGER.info("\r\n");
+			LOGGER.info("\r\n");*/
 
 		}
 	}

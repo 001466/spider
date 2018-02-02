@@ -11,14 +11,24 @@ public class ProxyEntity extends BaseEntity{
 	ProxyType 	protl;
 	String 		username;
 	String 		password;
+    Short 		anonymous;
 
-	public ProxyEntity() {
-	};
 
-	public ProxyEntity(String ip, Integer port, ProxyType type) {
+	
+
+	public ProxyEntity() {};
+
+	public ProxyEntity(String ip, Integer port, ProxyType protl) {
 		this.host = ip;
 		this.port = port;
-		this.protl = type;
+		this.protl = protl;
+	};
+	
+	public ProxyEntity(String ip, Integer port, ProxyType protl,Short anonymous) {
+		this.host = ip;
+		this.port = port;
+		this.protl = protl;
+		this.anonymous=anonymous;
 	};
 
 	public String getHost() {
@@ -67,6 +77,14 @@ public class ProxyEntity extends BaseEntity{
 
 	public void setPort(Integer port) {
 		this.port = port;
+	}
+	
+	public Short getAnonymous() {
+		return anonymous;
+	}
+
+	public void setAnonymous(Short anonymous) {
+		this.anonymous = anonymous;
 	}
 
 

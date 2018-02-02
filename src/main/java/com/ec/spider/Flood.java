@@ -11,8 +11,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.ec.common.spider.Spider;
 
-
-public abstract class Crawl<T> implements InitializingBean, DisposableBean {
+public abstract class Flood<T> implements InitializingBean, DisposableBean {
 
 	private ExecutorService executor;
 
@@ -56,10 +55,9 @@ public abstract class Crawl<T> implements InitializingBean, DisposableBean {
 	private class Runer implements Runnable {
 		@Override
 		public void run() {
-			//while (!Thread.interrupted()) {
-			for(int i=0;i<3;i++){
+			while (!Thread.interrupted()) {
+			//for(int i=0;i<3;i++){
 				for(T spider:getSpiders().values()){
-					System.err.println(spider);
 					((Spider)spider).crawl();
 				}  
 			}
