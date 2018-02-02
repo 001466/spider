@@ -1,4 +1,4 @@
-package com.ec.common.utils;
+package com.ec.common.util;
 
 import java.net.InetAddress;
 
