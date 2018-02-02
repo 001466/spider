@@ -1,5 +1,7 @@
 package com.ec.common.spider.model;
 
+import java.util.Date;
+
 import com.ec.common.model.BaseEntity;
 
 public class ProxyEntity extends BaseEntity{
@@ -13,7 +15,8 @@ public class ProxyEntity extends BaseEntity{
 	String 		password;
     Short 		anonymous;
 
-
+    String createby;
+    Date createtime;
 	
 
 	public ProxyEntity() {};
@@ -85,6 +88,22 @@ public class ProxyEntity extends BaseEntity{
 
 	public void setAnonymous(Short anonymous) {
 		this.anonymous = anonymous;
+	}
+
+	public String getCreateby() {
+		return createby;
+	}
+
+	public void setCreateby(String createby) {
+		this.createby = createby;
+	}
+
+	public Date getCreatetime() {
+		return createtime;
+	}
+
+	public void setCreatetime(Date createtime) {
+		this.createtime = createtime;
 	}
 
 

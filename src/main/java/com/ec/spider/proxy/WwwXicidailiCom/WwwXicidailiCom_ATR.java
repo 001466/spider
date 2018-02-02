@@ -1,5 +1,7 @@
 package com.ec.spider.proxy.WwwXicidailiCom;
 
+import java.util.List;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.ec.common.spider.generic.AsyncRestTemplateSpider;
+import com.ec.common.spider.model.ProxyEntity;
 import com.ec.spider.proxy.Proxy;
 
 @Component
@@ -55,12 +58,17 @@ public class WwwXicidailiCom_ATR extends AsyncRestTemplateSpider implements Prox
 
 		@Override
 		public void onSuccess(ResponseEntity<byte[]> result) {
+			
 			super.onSuccess(result);
 			
 			try {
 				Document doc = Jsoup.parse(decode(result));
-				Parse.parse(doc);
-			} catch (Exception e) {}
+				doc.setBaseUri(getUrl());
+				List<ProxyEntity> list=Parse.parse(doc);
+				proxyFeign.batchadd(list.subList(0, 20));
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(),e);
+			}
 
 		}
 

@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 import com.ec.common.ApplicationContext;
 import com.ec.common.spider.Spider;
 @Service
-//@EnableScheduling
-public class ProxySchedule implements InitializingBean{
+@EnableScheduling
+public class ProxySchedule /*implements InitializingBean*/{
 	
 	protected static final Logger LOGGER = LoggerFactory.getLogger(ProxySchedule.class);
 	
-	//@Scheduled(cron = "${spider.crawl.proxy.cron:0 1 0 * * ?}")
+	@Scheduled(cron = "${spider.crawl.proxy.cron:0 1 0 * * ?}")
 	private void schedule() {
 		 Map<String, Proxy> spiderMap=ApplicationContext.getAPPLICATION_CONTEXT().getBeansOfType(Proxy.class, false, true);
 		for (Proxy spider : spiderMap.values()) {
@@ -26,8 +26,8 @@ public class ProxySchedule implements InitializingBean{
 		}
 	}
 
-	@Override
-	public void afterPropertiesSet() throws Exception {schedule();}
+	//@Override
+	//public void afterPropertiesSet() throws Exception {schedule();}
 
 
 }
