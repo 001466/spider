@@ -65,7 +65,7 @@ public class WwwXicidailiCom_ATR extends AsyncRestTemplateSpider implements Prox
 				Document doc = Jsoup.parse(decode(result));
 				doc.setBaseUri(getUrl());
 				List<ProxyEntity> list=Parse.parse(doc);
-				proxyFeign.batchadd(list.subList(0, 20));
+				proxyFeign.batchadd(list);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(),e);
 			}

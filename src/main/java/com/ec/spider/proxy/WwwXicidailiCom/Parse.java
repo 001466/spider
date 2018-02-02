@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.ec.common.spider.model.ProxyEntity;
 import com.ec.common.spider.model.ProxyType;
+import com.ec.common.utils.Ping;
 @Component
 class Parse {
 	public static  List<ProxyEntity> parse(Document doc){
@@ -35,7 +36,13 @@ class Parse {
 			ProxyEntity pe=new ProxyEntity(host, Integer.parseInt(port), ProxyType.valueOf(protl.toLowerCase()), Short.parseShort(anonymous));
 			pe.setCreateby(doc.baseUri());
 			pe.setCreatetime(new Date());
-			list.add(pe);
+			
+			try {
+				if(Ping.ping(pe.getHost()))
+					list.add(pe);
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
 
 		}
 		return list;

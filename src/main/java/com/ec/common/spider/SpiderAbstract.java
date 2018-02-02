@@ -6,8 +6,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.NameValuePair;
@@ -17,12 +20,9 @@ import com.ec.common.spider.dao.ProxyFeign;
 import com.ec.common.spider.model.ProxyEntity;
 
 public abstract class SpiderAbstract implements Spider {
-	
+
 	@Autowired
-	protected ProxyFeign 	proxyFeign;
-	
-	
-	
+	protected ProxyFeign proxyFeign;
 
 	protected ProxyEntity proxyEntity;
 
@@ -49,7 +49,7 @@ public abstract class SpiderAbstract implements Spider {
 	}
 
 	protected static String decode(java.io.InputStream is) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 		String data;
 		StringBuilder sb = new StringBuilder();
 		while ((data = br.readLine()) != null) {
@@ -57,28 +57,25 @@ public abstract class SpiderAbstract implements Spider {
 		}
 		return sb.toString();
 	}
-	
-	
-	
-	
-	public String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
-	{
-	    StringBuilder result = new StringBuilder();
-	    boolean first = true;
 
-	    for (NameValuePair pair : params)
-	    {
-	        if (first)
-	            first = false;
-	        else
-	            result.append("&");
+	public String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
+		StringBuilder result = new StringBuilder();
+		boolean first = true;
 
-	        result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
-	        result.append("=");
-	        result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
-	    }
+		for (NameValuePair pair : params) {
+			if (first)
+				first = false;
+			else
+				result.append("&");
 
-	    return result.toString();
+			result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+			result.append("=");
+			result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+		}
+
+		return result.toString();
 	}
+
+	
 
 }
