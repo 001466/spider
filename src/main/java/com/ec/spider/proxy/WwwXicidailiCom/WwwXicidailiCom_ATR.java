@@ -43,7 +43,7 @@ public class WwwXicidailiCom_ATR extends AsyncRestTemplateSpider implements Prox
 		h.add("Upgrade-Insecure-Requests", "1");
 		h.add("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
 		try {
-			get(getUrl(), h, new SCallback(getUrl(), null, System.currentTimeMillis()));
+			get(getUrl(), h);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
 		}

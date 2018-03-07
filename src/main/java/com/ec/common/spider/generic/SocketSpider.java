@@ -8,14 +8,17 @@ import java.net.Proxy;
 import java.net.Socket;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.ec.common.spider.SpiderAbstract;
 import com.ec.common.spider.model.ProxyEntity;
+import com.ec.common.spider.model.ProxyType;
 
 public abstract class SocketSpider extends SpiderAbstract implements InitializingBean{
 	
@@ -90,6 +93,7 @@ public abstract class SocketSpider extends SpiderAbstract implements Initializin
 		}
         setProxyEntity(proxyEntity);
         
+        LOGGER.info("set proxy",this.proxyEntity);
 	        
 		/*
 		 
@@ -115,6 +119,35 @@ public abstract class SocketSpider extends SpiderAbstract implements Initializin
 	    Authenticator.setDefault(new MyAuthenticator("userName", "Password"));  
 		 
 		 */
+	}
+	
+	
+	
+	public void onFailure(Throwable ex, List<NameValuePair> params) {
+		
+		try{
+			StringBuilder sb = new StringBuilder();
+			sb.append("onFailure\r\n");
+			sb.append("url:").append(getUrl()).append("\r\n");
+			sb.append("params:").append(params).append("\r\n");
+			if (proxyEntity != null)
+				sb.append("proxy:").append(proxyEntity.getHost()).append(",").append(proxyEntity.getPort())
+						.append(",").append(proxyEntity.getProtl()).append(",")
+						.append(proxyEntity.getUsername()).append(",").append(proxyEntity.getPassword())
+						.append("\r\n");
+			sb.append("error:").append(ex.getMessage()).append("\r\n");
+			sb.append("\r\n");
+			LOGGER.error(sb.toString());
+		}catch(Exception e){
+			LOGGER.error(e.getMessage(),e);
+		}finally {
+			if (proxyEntity != null){
+				proxyFeign.del(proxyEntity.getId());
+				LOGGER.info("del proxy",proxyEntity);
+			}
+			setProxy(proxyFeign.get(ProxyType.http.name()).getData());
+		}
+
 	}
 
 	

@@ -30,7 +30,6 @@ public abstract class URLSpider extends SpiderAbstract implements InitializingBe
 	@Override
 	public void setProxy(ProxyEntity proxyEntity) {
 		this.proxyEntity=proxyEntity;
-		
 		try {
 			
 			connetProxy=new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyEntity.getHost(), proxyEntity.getPort()));
@@ -45,6 +44,8 @@ public abstract class URLSpider extends SpiderAbstract implements InitializingBe
 			e.printStackTrace();
 			LOGGER.error(e.getMessage(),e);
 		}
+		
+		LOGGER.info("set proxy",this.proxyEntity);
 		
 		/*
 		System.getProperties().put( "proxySet", "true" );
@@ -71,30 +72,43 @@ public abstract class URLSpider extends SpiderAbstract implements InitializingBe
 	
 	
 	
-	public void onFailure(HttpURLConnection connection, List<NameValuePair> params,Exception ex) throws IOException{
-		 
-        StringBuilder sb = new StringBuilder();
-		sb.append("\r\n");
-		sb.append("url:").append(getUrl()).append("\r\n");
-		sb.append("params:").append(params).append("\r\n");
-		sb.append("status:").append(connection.getResponseCode()).append("\r\n");
-		sb.append("msg:").append(connection.getResponseMessage()).append("\r\n");
+	public void onFailure(HttpURLConnection connection, List<NameValuePair> params,Exception ex) {
+		try{ 
+	        StringBuilder sb = new StringBuilder();
+			sb.append("onFailure\r\n");
+			sb.append("url:").append(getUrl()).append("\r\n");
+			sb.append("params:").append(params).append("\r\n");
+			sb.append("status:").append(connection.getResponseCode()).append("\r\n");
+			sb.append("msg:").append(connection.getResponseMessage()).append("\r\n");
+			
+			if (proxyEntity != null)
+				sb.append("proxy:").append(proxyEntity.getHost()).append(",").append(proxyEntity.getPort())
+						.append(",").append(proxyEntity.getProtl()).append(",")
+						.append(proxyEntity.getUsername()).append(",").append(proxyEntity.getPassword())
+						.append("\r\n");
+			sb.append("error:").append(ex.getMessage()).append("\r\n");
+			sb.append("\r\n");
+			LOGGER.error(sb.toString());
+			
+		}catch(Exception e){
+			LOGGER.error(e.getMessage(),e);
+		}finally {
+			
+			if (proxyEntity != null){
+				proxyFeign.del(proxyEntity.getId());
+				LOGGER.info("del proxy",proxyEntity);
+			}
+			
+			setProxy(proxyFeign.get(ProxyType.http.name()).getData());
+		}
 		
-		if (proxyEntity != null)
-			sb.append("proxy:").append(proxyEntity.getHost()).append(",").append(proxyEntity.getPort())
-					.append(",").append(proxyEntity.getProtl()).append(",")
-					.append(proxyEntity.getUsername()).append(",").append(proxyEntity.getPassword())
-					.append("\r\n");
-		sb.append("error:").append(ex.getMessage()).append("\r\n");
-		sb.append("\r\n");
-		LOGGER.error(sb.toString());
-		setProxy(proxyFeign.get(ProxyType.http.name()).getData());
+		
 	}
 	
 	public void onSuccess(HttpURLConnection connection, List<NameValuePair> params) throws IOException{
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("\r\n");
+		sb.append("onSuccess\r\n");
 		sb.append("url:").append(getUrl()).append("\r\n");
 		sb.append("params:").append(params).append("\r\n");
 		sb.append("status:").append(connection.getResponseCode()).append("\r\n");

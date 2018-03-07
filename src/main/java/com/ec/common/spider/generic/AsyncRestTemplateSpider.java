@@ -37,12 +37,11 @@ import org.springframework.http.client.HttpComponentsAsyncClientHttpRequestFacto
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.concurrent.FailureCallback;
 import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.util.concurrent.SuccessCallback;
 import org.springframework.web.client.AsyncRestTemplate;
 
 import com.ec.common.spider.SpiderAbstract;
-import com.ec.common.spider.generic.AsyncRestTemplateSpider.FCallback;
-import com.ec.common.spider.generic.AsyncRestTemplateSpider.SCallback;
 import com.ec.common.spider.model.ProxyEntity;
 import com.ec.common.spider.model.ProxyType;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -216,21 +215,22 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 		}catch(Exception e){
 			LOGGER.error(e.getMessage(),e);
 		}
-	
+		LOGGER.info("set proxy",this.proxyEntity);
 		
 	}
 	
 	
-	protected void get(String url,HttpHeaders headers,SuccessCallback<ResponseEntity<byte[]>> scallback) throws Exception {
+
+	protected void get(String url,HttpHeaders headers) throws Exception {
 		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
-		asyncRestTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class).addCallback(scallback,new FCallback(url,null,System.currentTimeMillis()));;
+		asyncRestTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class).addCallback(new SCallback(url,null,System.currentTimeMillis()),new FCallback(url,null,System.currentTimeMillis()));;
 	}
 
 	protected void postJson(Object params, String url,HttpHeaders headers) throws Exception {
 
 		String postJson = mapper.writeValueAsString(params);
-		HttpEntity<String> formEntity = new HttpEntity<String>(postJson.toString(), headers);
-		asyncRestTemplate.exchange(url, HttpMethod.POST, formEntity, byte[].class)
+		HttpEntity<String> httpEntity = new HttpEntity<String>(postJson.toString(), headers);
+		asyncRestTemplate.exchange(url, HttpMethod.POST, httpEntity, byte[].class)
 				.addCallback(new SCallback(url,params,System.currentTimeMillis()),new FCallback(url,params,System.currentTimeMillis()));
 
 	}
@@ -276,9 +276,10 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 		@Override
 		public void onSuccess(ResponseEntity<byte[]> result) {
 			
+			System.err.println(new String(result.getBody()));
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("\r\n");
+			sb.append("onSuccess\r\n");
 			sb.append("url:").append(url).append("\r\n");
 			sb.append("params:").append(params).append("\r\n");
 			if (proxyEntity != null)
@@ -292,10 +293,10 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 			LOGGER.warn(sb.toString());
 			LOGGER.warn("\r\n");
 			
-			/*try {
+			try {
 				LOGGER.info(new StringBuilder(sb.toString()).append("result:\r\n").append(decode(result)).append("\r\n").toString());
 			} catch (Exception e) {LOGGER.error(sb.toString());}
-			LOGGER.info("\r\n");*/
+			LOGGER.info("\r\n");
 
 		}
 	}
@@ -317,22 +318,29 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 		@Override
 		public void onFailure(Throwable ex) {
 			
-			System.err.println(ex.getMessage());
-
-			StringBuilder sb = new StringBuilder();
-			sb.append("\r\n");
-			sb.append("url:").append(url).append("\r\n");
-			sb.append("params:").append(params).append("\r\n");
-			if (proxyEntity != null)
-				sb.append("proxy:").append(proxyEntity.getHost()).append(",").append(proxyEntity.getPort())
-						.append(",").append(proxyEntity.getProtl()).append(",")
-						.append(proxyEntity.getUsername()).append(",").append(proxyEntity.getPassword())
-						.append("\r\n");
-			sb.append("duration:").append(System.currentTimeMillis() - s).append("\r\n");
-			sb.append("error:").append(ex.getMessage()).append("\r\n");
-			sb.append("\r\n");
-			LOGGER.error(sb.toString());
-			setProxy(proxyFeign.get(ProxyType.http.name()).getData());
+			try{
+				StringBuilder sb = new StringBuilder();
+				sb.append("onFailure\r\n");
+				sb.append("url:").append(url).append("\r\n");
+				sb.append("params:").append(params).append("\r\n");
+				if (proxyEntity != null)
+					sb.append("proxy:").append(proxyEntity.getHost()).append(",").append(proxyEntity.getPort())
+							.append(",").append(proxyEntity.getProtl()).append(",")
+							.append(proxyEntity.getUsername()).append(",").append(proxyEntity.getPassword())
+							.append("\r\n");
+				sb.append("duration:").append(System.currentTimeMillis() - s).append("\r\n");
+				sb.append("error:").append(ex.getMessage()).append("\r\n");
+				sb.append("\r\n");
+				LOGGER.error(sb.toString());
+			}catch(Exception e){
+				LOGGER.error(e.getMessage(),e);
+			}finally {
+				if (proxyEntity != null){
+					proxyFeign.del(proxyEntity.getId());
+					LOGGER.info("del proxy",proxyEntity);
+				}
+				setProxy(proxyFeign.get(ProxyType.http.name()).getData());
+			}
 
 		}
 	}

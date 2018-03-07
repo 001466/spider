@@ -22,6 +22,6 @@ public interface ProxyFeign {
 	public Response<String> batchadd(@RequestBody List<ProxyEntity> list);
 	
 	
-	@RequestMapping("/del{id}")
+	@RequestMapping("/del/{id}")
 	public Response<String> del(@RequestParam("id") String id);
 }
