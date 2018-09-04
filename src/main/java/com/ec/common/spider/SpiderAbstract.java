@@ -6,23 +6,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.NameValuePair;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ec.common.spider.dao.ProxyFeign;
 import com.ec.common.spider.model.ProxyEntity;
 
 public abstract class SpiderAbstract implements Spider {
 
-	@Autowired
-	protected ProxyFeign proxyFeign;
+	/*@Autowired
+	protected ProxyFeign proxyFeign;*/
 
 	protected ProxyEntity proxyEntity;
 

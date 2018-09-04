@@ -140,13 +140,13 @@ public abstract class SocketSpider extends SpiderAbstract implements Initializin
 			LOGGER.error(sb.toString());
 		}catch(Exception e){
 			LOGGER.error(e.getMessage(),e);
-		}finally {
+		}finally {/*
 			if (proxyEntity != null){
 				proxyFeign.del(proxyEntity.getId());
 				LOGGER.info("del proxy",proxyEntity);
 			}
 			setProxy(proxyFeign.get(ProxyType.http.name()).getData());
-		}
+		*/}
 
 	}
 

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import com.ec.common.spider.model.ProxyEntity;
 import com.ec.common.spider.model.ProxyType;
 import com.ec.common.util.Ping;
-@Component
+//@Component
 class Parse {
 	public static  List<ProxyEntity> parse(Document doc){
 		

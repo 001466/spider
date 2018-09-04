@@ -4,20 +4,18 @@ import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.FailureCallback;
+import org.springframework.util.concurrent.SuccessCallback;
 
 import com.ec.common.spider.generic.AsyncRestTemplateSpider;
 import com.ec.common.spider.model.ProxyEntity;
 import com.ec.spider.proxy.Proxy;
 
-@Component
+//@Component
 public class WwwXicidailiCom_ATR extends AsyncRestTemplateSpider implements Proxy {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(WwwXicidailiCom_ATR.class);
@@ -50,28 +48,39 @@ public class WwwXicidailiCom_ATR extends AsyncRestTemplateSpider implements Prox
 
 	}
 
-	protected class SCallback extends AsyncRestTemplateSpider.SCallback {
+	protected class SCallback implements SuccessCallback<ResponseEntity<byte[]>> {
 
 		public SCallback(String url, Object params, long s) {
-			super(url, params, s);
+			
 		}
 
 		@Override
 		public void onSuccess(ResponseEntity<byte[]> result) {
 			
-			super.onSuccess(result);
 			
 			try {
 				Document doc = Jsoup.parse(decode(result));
 				doc.setBaseUri(getUrl());
 				List<ProxyEntity> list=Parse.parse(doc);
-				proxyFeign.batchadd(list);
+				//proxyFeign.batchadd(list);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(),e);
 			}
 
 		}
 
+	}
+
+	@Override
+	protected SuccessCallback<ResponseEntity<byte[]>> onSuccess() {
+		return new SCallback(getUrl(),null,System.currentTimeMillis());
+	}
+
+
+	@Override
+	protected FailureCallback onFailure(String url, Object params, HttpHeaders headers) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

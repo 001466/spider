@@ -1,4 +1,4 @@
-package com.ec.common.controller;
+/*package com.ec.common.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-/**
+*//**
  *
  * @author winall
  *
- */
+ *//*
 @RestController
 public class InfoController {
 
@@ -29,3 +29,4 @@ public class InfoController {
 	}
 
 }
+*/

@@ -222,8 +222,10 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 	
 
 	protected void get(String url,HttpHeaders headers) throws Exception {
+		System.err.println(url);
+
 		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
-		asyncRestTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class).addCallback(new SCallback(url,null,System.currentTimeMillis()),new FCallback(url,null,System.currentTimeMillis()));;
+		asyncRestTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class).addCallback(onSuccess(),onFailure(url,null,headers));;
 	}
 
 	protected void postJson(Object params, String url,HttpHeaders headers) throws Exception {
@@ -231,7 +233,7 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 		String postJson = mapper.writeValueAsString(params);
 		HttpEntity<String> httpEntity = new HttpEntity<String>(postJson.toString(), headers);
 		asyncRestTemplate.exchange(url, HttpMethod.POST, httpEntity, byte[].class)
-				.addCallback(new SCallback(url,params,System.currentTimeMillis()),new FCallback(url,params,System.currentTimeMillis()));
+				.addCallback(onSuccess(),onFailure(url,params,headers));
 
 	}
 
@@ -242,7 +244,7 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 		HttpEntity<LinkedMultiValueMap<String, String>> formEntity = new HttpEntity<LinkedMultiValueMap<String, String>>(
 				multiValueMap, headers);
 		asyncRestTemplate.postForEntity(url, formEntity, byte[].class)
-				.addCallback(new SCallback(url,params,System.currentTimeMillis()),new FCallback(url,params,System.currentTimeMillis()));
+				.addCallback(onSuccess(),onFailure(url,params,headers));
 
 	}
 	
@@ -258,7 +260,11 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 
 	}
 	
-	protected   class SCallback implements SuccessCallback<ResponseEntity<byte[]>> {
+	
+	protected abstract SuccessCallback<ResponseEntity<byte[]>> onSuccess();
+	protected abstract FailureCallback onFailure(String url,Object params,HttpHeaders headers);
+	
+	/*protected   class SCallback implements SuccessCallback<ResponseEntity<byte[]>> {
 		
 
 		protected  final Logger LOGGER = LoggerFactory.getLogger(SCallback.class);
@@ -276,7 +282,6 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 		@Override
 		public void onSuccess(ResponseEntity<byte[]> result) {
 			
-			System.err.println(new String(result.getBody()));
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("onSuccess\r\n");
@@ -299,9 +304,9 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 			LOGGER.info("\r\n");
 
 		}
-	}
+	}*/
 
-	protected   class FCallback implements FailureCallback {
+	/*protected   class FCallback implements FailureCallback {
 
 		protected  final Logger LOGGER = LoggerFactory.getLogger(FCallback.class);
 
@@ -343,7 +348,7 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 			}
 
 		}
-	}
+	}*/
 
 	public static Map<String, String> toMap(Object object) {
 		if (object == null)
@@ -413,7 +418,7 @@ public abstract class AsyncRestTemplateSpider extends SpiderAbstract implements 
 	}
 	*/
 
-	
+
 	
 
 	

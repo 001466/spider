@@ -92,7 +92,7 @@ public abstract class URLSpider extends SpiderAbstract implements InitializingBe
 			
 		}catch(Exception e){
 			LOGGER.error(e.getMessage(),e);
-		}finally {
+		}finally {/*
 			
 			if (proxyEntity != null){
 				proxyFeign.del(proxyEntity.getId());
@@ -100,7 +100,7 @@ public abstract class URLSpider extends SpiderAbstract implements InitializingBe
 			}
 			
 			setProxy(proxyFeign.get(ProxyType.http.name()).getData());
-		}
+		*/}
 		
 		
 	}
