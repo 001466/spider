@@ -34,7 +34,6 @@ CA
 CF
 TD
 CL
-CN
 CO
 CG
 CK

@@ -27,7 +27,7 @@ public class IpDownload_ATR extends AsyncRestTemplateSpider implements Proxy {
 	
 	
 	static String fromFilePath="country.txt";
-	static String toFilePath="ips.txt";
+	static String toFilePath="overseas-ips.txt";
 	static FileWriter toFile=null;
 	HttpHeaders h = genEmptHeader();
 	
